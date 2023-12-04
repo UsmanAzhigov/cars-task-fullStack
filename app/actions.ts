@@ -39,4 +39,30 @@ export const createAuto = async (formData: FormData) => {
   revalidatePath('/');
 };
 
+export const updateAuto = async (carId: number, formData: FormData) => {
+  revalidatePath('/');
 
+  const data = Object.fromEntries(formData);
+
+  await prisma.car.update({
+    where: {
+      id: carId,
+    },
+    data: {
+      imageUrl: data.imageUrl as string,
+      modelName: data.modelName as string,
+      price: Number(data.price),
+      year: Number(data.year),
+      color: data.color as string,
+      engineType: data.engineType as EngineType,
+      transmission: data.transmission as Transmisison,
+      brand: {
+        connect: {
+          id: Number(data.brand),
+        },
+      },
+    },
+  });
+
+  revalidatePath('/');
+};

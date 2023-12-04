@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { prisma } from '@/core/prisma';
@@ -8,10 +10,11 @@ import CarCard from '@/components/car-card/car-card';
 
 interface HomeProps {
   searchParams: {
-    brand: string; 
+    brand: string;
   };
 }
 export default async function Home({ searchParams }: HomeProps) {
+  const [sortOrder, setSortOrder] = React.useState<boolean>(true);
   const cars = await prisma.car.findMany({
     where: {
       brand: {
@@ -20,9 +23,14 @@ export default async function Home({ searchParams }: HomeProps) {
         },
       },
     },
-    orderBy: {
-      id: 'asc',
-    },
+    orderBy: [
+      {
+        price: sortOrder ? 'desc' : 'asc',
+      },
+      {
+        year: sortOrder ? 'desc' : 'asc',
+      },
+    ],
     include: {
       brand: true,
       equipment: true,
@@ -30,10 +38,16 @@ export default async function Home({ searchParams }: HomeProps) {
     },
   });
 
+  const handleSort = () => {
+    setSortOrder(!sortOrder);
+  };
 
   return (
       <main className={styles.mainContainer}>
         <h2>Автомобили:</h2>
+        <button onClick={handleSort}>
+          Сортировать по цене
+        </button>
         <div className={styles.cardList}>
           {cars.map((car) => (
             <CarCard car={car} />

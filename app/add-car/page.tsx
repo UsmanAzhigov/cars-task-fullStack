@@ -94,7 +94,7 @@ const AddForm = () => {
         </label>
       ))}
       <Button type="submit">Создать</Button>
-      <Link href='/'> <Button>Назад</Button></Link>
+      <Link href='/'><Button>Назад</Button></Link>
     </form>
   );
 };
