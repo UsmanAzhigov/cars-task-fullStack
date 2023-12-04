@@ -1,12 +1,23 @@
-.mainContainer{
+.mainContainer {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.cardList{
+.cardList {
   display: flex;
   flex-wrap: wrap;
   gap: 65px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.authButtons {
+  display: flex;
+  gap: 10px;
 }
 

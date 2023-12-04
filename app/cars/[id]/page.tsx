@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Link from 'next/link';
 import { prisma } from '@/core/prisma';
 import { notFound } from 'next/navigation';
@@ -6,7 +7,7 @@ import { notFound } from 'next/navigation';
 import Button from '@/components/Button';
 import styles from './card-details.module.scss';
 
-export default async function CarDetails({ params }: { params: { id: number }}) {
+export default async function CarDetails({ params }: { params: { id: number } }) {
   const data = await prisma.car.findFirst({
     where: {
       id: Number(params.id),

@@ -6,13 +6,10 @@ import { prisma } from '@/core/prisma';
 import styles from './home.module.scss';
 
 import Button from '@/components/Button';
-import CarCard from '@/components/car-card/car-card';
+import Page from '@/components/car-card/page';
+import { HomeProps } from '@/app/home.type';
 
-interface HomeProps {
-  searchParams: {
-    brand: string;
-  };
-}
+
 export default async function Home({ searchParams }: HomeProps) {
   const [sortOrder, setSortOrder] = React.useState<boolean>(true);
   const cars = await prisma.car.findMany({
@@ -38,25 +35,35 @@ export default async function Home({ searchParams }: HomeProps) {
     },
   });
 
-  const handleSort = () => {
-    setSortOrder(!sortOrder);
-  };
+  // const handleSort = () => {
+  //   setSortOrder(!sortOrder);
+  //   console.log(sortOrder);
+  // };
 
   return (
-      <main className={styles.mainContainer}>
+    <main className={styles.mainContainer}>
+      <div className={styles.header}>
         <h2>Автомобили:</h2>
-        <button onClick={handleSort}>
-          Сортировать по цене
-        </button>
-        <div className={styles.cardList}>
-          {cars.map((car) => (
-            <CarCard car={car} />
-          ))}
+        <div className={styles.authButtons}>
+          <>
+            <Link href='/profile/register'>
+              <Button>Регистрация</Button>
+            </Link>
+            <Link href='/profile/login'>
+              <Button>Авторизация</Button>
+            </Link>
+          </>
         </div>
-        <hr />
-        <Link href='/add-car'>
-          <Button>Добавить авто</Button>
-        </Link>
-      </main>
+      </div>
+      <div className={styles.cardList}>
+        {cars.map((car) => (
+          <Page car={car} key={car.id} />
+        ))}
+      </div>
+      <hr />
+      <Link href='/add-car'>
+        <Button>Добавить авто</Button>
+      </Link>
+    </main>
   );
 }
