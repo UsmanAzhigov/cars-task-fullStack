@@ -1,8 +1,17 @@
+import React from 'react';
 import Link from 'next/link';
 import { prisma } from '@/core/prisma';
-import { AddForm } from '@/components/AddForm';
+import styles from './home.module.scss';
 
-export default async function Home({ searchParams }) {
+import Button from '@/components/Button';
+import CarCard from '@/components/car-card/car-card';
+
+interface HomeProps {
+  searchParams: {
+    brand: string; 
+  };
+}
+export default async function Home({ searchParams }: HomeProps) {
   const cars = await prisma.car.findMany({
     where: {
       brand: {
@@ -21,23 +30,19 @@ export default async function Home({ searchParams }) {
     },
   });
 
+
   return (
-    <main>
-      {cars.map((car) => (
-        <Link href={`/cars/${car.id}`} key={car.id} prefetch>
-          <img src={car.imageUrl} width={150} height={150} />
-          <h3>
-            {car.brand.name} {car.modelName}
-          </h3>
-          <p>{car.equipment.map((e) => e.name).join(', ')}</p>
+      <main className={styles.mainContainer}>
+        <h2>Автомобили:</h2>
+        <div className={styles.cardList}>
+          {cars.map((car) => (
+            <CarCard car={car} />
+          ))}
+        </div>
+        <hr />
+        <Link href='/add-car'>
+          <Button>Добавить авто</Button>
         </Link>
-      ))}
-
-      <hr />
-
-      <h1>Добавить авто:</h1>
-
-      <AddForm />
-    </main>
+      </main>
   );
 }

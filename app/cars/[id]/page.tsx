@@ -1,7 +1,12 @@
+import React from 'react';
+import Link from 'next/link';
 import { prisma } from '@/core/prisma';
 import { notFound } from 'next/navigation';
 
-export default async function CarDetails({ params }) {
+import Button from '@/components/Button';
+import styles from './card-details.module.scss';
+
+export default async function CarDetails({ params }: { params: { id: number }}) {
   const data = await prisma.car.findFirst({
     where: {
       id: Number(params.id),
@@ -18,14 +23,24 @@ export default async function CarDetails({ params }) {
   }
 
   return (
-    <main>
-      <img src={data.imageUrl} width={500} />
-      <h1>
-        {data.brand.name} {data.modelName}
+    <main className={styles.carDetailsContainer}>
+      <img className={styles.carImage} src={data.imageUrl} alt={`${data.brand.name} ${data.modelName}`} />
+      <h1 className={styles.carTitle}>
+        <div className={styles.carBrand}>{data.brand.name} {data.modelName}</div>
+        <div className={styles.carPrice}>Стоимость: {data.price}</div>
+        <div className={styles.carInfo}>Цвет: {data.color}</div>
+        <div className={styles.carInfo}>Тип двигателя: {data.engineType}</div>
+        <div className={styles.carInfo}>Трансмиссия: {data.transmission}</div>
+        <div className={styles.carInfo}>Запас хода: {data.powerReserve}</div>
+        <ul className={styles.carFeatureList}>
+          <p className={styles.carEquipment}>Комплектация: {data.equipment.map((e) => e.name).join(', ')}</p>
+        </ul>
       </h1>
-      <h3>Цена: {data.price}</h3>
+      <h3 className={styles.carPrice}>Цена: {data.price}</h3>
       <hr />
-      <p>{data.equipment.map((e) => e.name).join(', ')}</p>
+      <Link href='/'>
+        <Button>Назад</Button>
+      </Link>
     </main>
   );
 }

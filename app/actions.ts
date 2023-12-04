@@ -5,13 +5,9 @@ import { EngineType, Transmisison } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
 export const createAuto = async (formData: FormData) => {
-  console.log(444444444, formData);
-
   revalidatePath('/');
 
   const data = Object.fromEntries(formData);
-
-  console.log(data);
 
   await prisma.car.create({
     data: {
@@ -42,3 +38,5 @@ export const createAuto = async (formData: FormData) => {
 
   revalidatePath('/');
 };
+
+
