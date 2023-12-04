@@ -1,10 +1,12 @@
 export interface HomeProps {
   searchParams: {
-    brand: string;
-  };
+    brand: string
+    orderBy: 'asc' | 'desc'
+    sortBy: string
+  }
   user: {
-    id: number;
-    fullName: string;
-    email: string;
-  } | null;
+    id: number
+    fullName: string
+    email: string
+  } | null
 }

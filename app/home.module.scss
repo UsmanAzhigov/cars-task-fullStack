@@ -18,6 +18,9 @@
 
 .authButtons {
   display: flex;
+  justify-content: flex-end;
   gap: 10px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
 }
-

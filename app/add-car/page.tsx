@@ -1,13 +1,14 @@
-'use client';
+'use client'
 
-import React from 'react';
-import Link from 'next/link';
-import { router } from 'next/client';
-import { useForm } from 'react-hook-form';
-import { createAuto } from '@/app/actions';
+import React from 'react'
+import Link from 'next/link'
+import { router } from 'next/client'
+import { useForm } from 'react-hook-form'
+import { createAuto } from '@/app/actions'
 
-import Button from '@/components/Button';
-import styles from './add-car.module.scss';
+import { Button } from '@mantine/core'
+import styles from './add-car.module.scss'
+import { CreateCartFormValues } from './add-cart.types'
 
 const equipmentOptions = [
   'регулировка сидений',
@@ -27,19 +28,29 @@ const equipmentOptions = [
   'противотуманные фары',
   'центральный замок',
   'штатный иммобилайзер',
-];
+]
 
 const AddForm = () => {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = async (formData) => {
+  const { register, handleSubmit } = useForm<CreateCartFormValues>({
+    defaultValues: {
+      imageUrl: '',
+      brand: '',
+      modelName: '',
+      price: '',
+      year: '',
+      color: '',
+      equipment: '',
+    },
+  })
+
+  const onSubmit = async (formData: CreateCartFormValues) => {
     try {
-      const formattedData = Object.entries(formData);
-      await createAuto(formattedData);
+      await createAuto(formData)
     } catch (error) {
-      console.error('Error during form submission:', error);
+      console.error('Error during form submission:', error)
     }
-    router.push('/');
-  };
+    router.push('/')
+  }
 
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit(onSubmit)}>
@@ -47,7 +58,8 @@ const AddForm = () => {
         {
           label: 'Ссылка на изображение',
           name: 'imageUrl',
-          defaultValue: 'https://cdn.iz.ru/sites/default/files/styles/900x506/public/news-2023-09/1_3.jpg?itok=JTrbT080',
+          defaultValue:
+            'https://cdn.iz.ru/sites/default/files/styles/900x506/public/news-2023-09/1_3.jpg?itok=JTrbT080',
         },
         { label: 'Бренд', name: 'brand', defaultValue: '1' },
         { label: 'Название модели', name: 'modelName', defaultValue: 'R8' },
@@ -69,8 +81,13 @@ const AddForm = () => {
           options: ['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC'],
         },
         { label: 'Запас хода', name: 'powerReserve', defaultValue: '0' },
-        { label: 'Комплектация', name: 'equipment', defaultValue: '', type: 'select', options: equipmentOptions },
-
+        {
+          label: 'Комплектация',
+          name: 'equipment',
+          defaultValue: '',
+          type: 'select',
+          options: equipmentOptions,
+        },
       ].map(({ label, name, defaultValue, type, options }) => (
         <label key={name} className={styles.formLabel}>
           {label}:
@@ -89,7 +106,7 @@ const AddForm = () => {
           ) : (
             <input
               className={styles.formInput}
-              type='text'
+              type="text"
               name={name}
               defaultValue={defaultValue}
               {...register(name)}
@@ -97,10 +114,12 @@ const AddForm = () => {
           )}
         </label>
       ))}
-      <Button type='submit'>Создать</Button>
-      <Link style={{ marginLeft: '10px' }} href='/'><Button>Назад</Button></Link>
+      <Button type="submit">Создать</Button>
+      <Link style={{ marginLeft: '10px' }} href="/">
+        <Button>Назад</Button>
+      </Link>
     </form>
-  );
-};
+  )
+}
 
-export default AddForm;
+export default AddForm

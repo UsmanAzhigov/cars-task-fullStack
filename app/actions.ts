@@ -1,50 +1,45 @@
-'use server';
+'use server'
 
-import { prisma } from '@/core/prisma';
-import { EngineType, Transmisison } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
+import { prisma } from '@/core/prisma'
+import { EngineType, Transmisison } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
 
 //@ts-ignore
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'
+import { CreateCartFormValues } from './add-car/add-cart.types'
 
 export const createUser = async (formData: {
-  password: string;
-  fullName: string;
+  password: string
+  fullName: string
   email: string
 }) => {
-  //@ts-ignore
-  const data = Object.fromEntries(formData);
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  const data = Object.fromEntries(formData)
+  const hashedPassword = await bcrypt.hash(data.password, 10)
   const newUser = await prisma.user.create({
     data: {
       fullName: data.username as string,
       email: data.email as string,
       password: hashedPassword,
     },
-  });
-  return newUser;
-};
+  })
+  return newUser
+}
 
 export const loginUser = async (fullName: string, password: string) => {
-  const user = await prisma.user.findUnique({
-    //@ts-ignore
+  const user = await prisma.user.findFirst({
     where: {
       fullName,
     },
-  });
+  })
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    return user;
+    return user
   } else {
-    return null;
+    return null
   }
-};
+}
 
-export const createAuto = async (formData: FormData) => {
-  revalidatePath('/');
-
-  const data = Object.fromEntries(formData);
-
+export const createAuto = async (data: CreateCartFormValues) => {
   await prisma.car.create({
     data: {
       imageUrl: data.imageUrl as string,
@@ -53,7 +48,7 @@ export const createAuto = async (formData: FormData) => {
       year: Number(data.year),
       color: data.color as string,
       equipment: {
-        connect: [],
+        connect: [{ id: 1 }],
       },
       user: {
         connect: {
@@ -70,15 +65,13 @@ export const createAuto = async (formData: FormData) => {
         },
       },
     },
-  });
+  })
 
-  revalidatePath('/');
-};
+  revalidatePath('/')
+}
 
 export const updateAuto = async (carId: number, formData: FormData) => {
-  revalidatePath('/');
-
-  const data = Object.fromEntries(formData);
+  const data = Object.fromEntries(formData)
 
   await prisma.car.update({
     where: {
@@ -108,7 +101,7 @@ export const updateAuto = async (carId: number, formData: FormData) => {
         },
       },
     },
-  });
+  })
 
-  revalidatePath('/');
-};
+  revalidatePath('/')
+}

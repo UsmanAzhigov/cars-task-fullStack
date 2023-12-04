@@ -1,17 +1,16 @@
-'use client';
+import React from 'react'
+import Link from 'next/link'
+import { prisma } from '@/core/prisma'
+import styles from './home.module.scss'
 
-import React from 'react';
-import Link from 'next/link';
-import { prisma } from '@/core/prisma';
-import styles from './home.module.scss';
+import { Container, Grid } from '@mantine/core'
 
-import Button from '@/components/Button';
-import Page from '@/components/car-card/page';
-import { HomeProps } from '@/app/home.type';
-
+import { Button } from '@mantine/core'
+import { HomeProps } from '@/app/home.type'
+import { Filters } from '@/components/filters'
+import { GridCars } from '@/components/GridCars'
 
 export default async function Home({ searchParams }: HomeProps) {
-  const [sortOrder, setSortOrder] = React.useState<boolean>(true);
   const cars = await prisma.car.findMany({
     where: {
       brand: {
@@ -20,50 +19,47 @@ export default async function Home({ searchParams }: HomeProps) {
         },
       },
     },
-    orderBy: [
-      {
-        price: sortOrder ? 'desc' : 'asc',
-      },
-      {
-        year: sortOrder ? 'desc' : 'asc',
-      },
-    ],
+    orderBy: {
+      [searchParams.sortBy || 'id']: searchParams.orderBy || 'desc',
+    },
     include: {
       brand: true,
       equipment: true,
       user: true,
     },
-  });
-
-  // const handleSort = () => {
-  //   setSortOrder(!sortOrder);
-  //   console.log(sortOrder);
-  // };
+  })
 
   return (
     <main className={styles.mainContainer}>
-      <div className={styles.header}>
-        <h2>Автомобили:</h2>
+      <Container size="md">
         <div className={styles.authButtons}>
-          <>
-            <Link href='/profile/register'>
-              <Button>Регистрация</Button>
-            </Link>
-            <Link href='/profile/login'>
-              <Button>Авторизация</Button>
-            </Link>
-          </>
+          <Link href="/profile/register">
+            <Button>Регистрация</Button>
+          </Link>
+          <Link href="/profile/login">
+            <Button>Авторизация</Button>
+          </Link>
         </div>
-      </div>
-      <div className={styles.cardList}>
-        {cars.map((car) => (
-          <Page car={car} key={car.id} />
-        ))}
-      </div>
-      <hr />
-      <Link href='/add-car'>
-        <Button>Добавить авто</Button>
-      </Link>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+            marginBottom: 15,
+            borderBottom: '1px solid #ccc',
+            paddingBottom: 15,
+          }}
+        >
+          <Filters />
+          <Link href="/add-car">
+            <Button color="green">Добавить авто</Button>
+          </Link>
+        </div>
+
+        <GridCars items={cars} />
+      </Container>
     </main>
-  );
+  )
 }
