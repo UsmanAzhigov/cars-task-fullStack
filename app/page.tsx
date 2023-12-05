@@ -3,13 +3,12 @@ import Link from 'next/link'
 import { prisma } from '@/core/prisma'
 import styles from './home.module.scss'
 
-import { Button, Container, Title } from '@mantine/core'
+import { Sort } from '@/components/sort'
 import { HomeProps } from '@/app/home.type'
-import { Filters } from '@/components/filters'
 import { GridCars } from '@/components/grid-cars'
+import { Button, Container } from '@mantine/core'
 
 export default async function Home({ searchParams }: HomeProps) {
-  // const userEmail = localStorage.getItem('email') || 'use client'
   const cars = await prisma.car.findMany({
     where: {
       brand: {
@@ -31,19 +30,8 @@ export default async function Home({ searchParams }: HomeProps) {
   return (
     <main className={styles.mainContainer}>
       <Container size="md">
-        <div className={styles.headerContainer}>
-          <Title order={3}>azigovusman@gmail.com</Title>
-          <span className={styles.authButtons}>
-            <Link href="/profile/register">
-              <Button>Регистрация</Button>
-            </Link>
-            <Link href="/profile/login">
-              <Button>Авторизация</Button>
-            </Link>
-          </span>
-        </div>
         <div className={styles.addCar}>
-          <Filters />
+          <Sort />
           <Link href="/add-car">
             <Button color="green">Добавить авто</Button>
           </Link>

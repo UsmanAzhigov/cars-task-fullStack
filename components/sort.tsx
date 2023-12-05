@@ -3,7 +3,7 @@
 import { Select } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 
-export const Filters: React.FC = () => {
+export const Sort: React.FC = () => {
   const router = useRouter()
 
   return (

@@ -1,14 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect } from 'react'
-import styles from './add-car.module.scss'
-
+import { message } from 'antd'
 import { useForm } from 'react-hook-form'
+import styles from './add-car.module.scss'
 import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 import { CreateCartFormValues } from './add-car.types'
-import { Input, Select, Button, Title } from '@mantine/core'
 import { createAuto, getEquipmentOptions } from '@/app/actions'
+import { Input, Select, Button, Title } from '@mantine/core'
 
 const AddForm: React.FC = () => {
   const router = useRouter()
@@ -21,13 +21,13 @@ const AddForm: React.FC = () => {
         price: '',
         year: '',
         color: '',
-        equipment: [1],
+        equipment: [1, 2, 3, 4, 5],
         engineType: '',
         transmission: '',
       },
     })
 
-  const [equipmentOptions, setEquipmentOptions] = React.useState<string[]>([])
+  const [equipmentOptions, setEquipmentOptions] = useState<string[]>([])
 
   useEffect(() => {
     async function fetchEquipmentOptions() {
@@ -35,17 +35,18 @@ const AddForm: React.FC = () => {
       setEquipmentOptions(options)
     }
     setValue('equipment', [1])
-    setValue('engineType', 'Не выбрано')
-    setValue('transmission', 'Не выбрано')
+    setValue('engineType', '')
+    setValue('transmission', '')
     fetchEquipmentOptions()
   }, [])
 
   const onSubmit = async (formData: CreateCartFormValues) => {
     try {
       await createAuto(formData)
+      message.succes('Авто добавлено')
       router.push('/')
     } catch (error) {
-      alert('Error creating')
+      message.error('Не удалось создать')
     }
   }
 
@@ -63,18 +64,19 @@ const AddForm: React.FC = () => {
         label="Комплектация"
         data={equipmentOptions}
         {...register('equipment')}
-        value={[1]}
+        value={getValues('equipment')}
+        onChange={(value) => setValue('equipment', value)}
       />
       <Select
         label="Тип двигателя"
-        data={['Не выбрано', 'GAS', 'DIESEL', 'ELECTOR']}
+        data={['GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
         value={getValues('engineType')}
         onChange={(value) => setValue('engineType', value)}
       />
       <Select
         label="Трансмиссия"
-        data={['Не выбрано', 'MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
+        data={['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
         value={getValues('transmission')}
         onChange={(value) => setValue('transmission', value)}
