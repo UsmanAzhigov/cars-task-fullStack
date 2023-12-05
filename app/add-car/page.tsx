@@ -1,123 +1,92 @@
 'use client'
 
-import React from 'react'
 import Link from 'next/link'
-import { router } from 'next/client'
-import { useForm } from 'react-hook-form'
-import { createAuto } from '@/app/actions'
-
-import { Button } from '@mantine/core'
+import React, { useEffect } from 'react'
 import styles from './add-car.module.scss'
-import { CreateCartFormValues } from './add-cart.types'
 
-const equipmentOptions = [
-  'регулировка сидений',
-  'регулировка руля',
-  'бортовой компьютер',
-  'камера заднего вида',
-  'обогрев руля',
-  'обогрев сидений',
-  'тонированные стекла',
-  'усилитель руля',
-  'электростеклоподъемники',
-  'темный салон',
-  'кондиционер',
-  'антипробуксовочная система',
-  'подушка безопасности',
-  'галогеновые фары',
-  'противотуманные фары',
-  'центральный замок',
-  'штатный иммобилайзер',
-]
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { CreateCartFormValues } from './add-car.types'
+import { Input, Select, Button, Title } from '@mantine/core'
+import { createAuto, getEquipmentOptions } from '@/app/actions'
 
-const AddForm = () => {
-  const { register, handleSubmit } = useForm<CreateCartFormValues>({
-    defaultValues: {
-      imageUrl: '',
-      brand: '',
-      modelName: '',
-      price: '',
-      year: '',
-      color: '',
-      equipment: '',
-    },
-  })
+const AddForm: React.FC = () => {
+  const router = useRouter()
+  const { register, handleSubmit, setValue, getValues } =
+    useForm<CreateCartFormValues>({
+      defaultValues: {
+        imageUrl: '',
+        brand: '',
+        modelName: '',
+        price: '',
+        year: '',
+        color: '',
+        equipment: [1],
+        engineType: '',
+        transmission: '',
+      },
+    })
+
+  const [equipmentOptions, setEquipmentOptions] = React.useState<string[]>([])
+
+  useEffect(() => {
+    async function fetchEquipmentOptions() {
+      const options = await getEquipmentOptions()
+      setEquipmentOptions(options)
+    }
+    setValue('equipment', [1])
+    setValue('engineType', 'Не выбрано')
+    setValue('transmission', 'Не выбрано')
+    fetchEquipmentOptions()
+  }, [])
 
   const onSubmit = async (formData: CreateCartFormValues) => {
     try {
       await createAuto(formData)
+      router.push('/')
     } catch (error) {
-      console.error('Error during form submission:', error)
+      alert('Error creating')
     }
-    router.push('/')
   }
 
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit(onSubmit)}>
-      {[
-        {
-          label: 'Ссылка на изображение',
-          name: 'imageUrl',
-          defaultValue:
-            'https://cdn.iz.ru/sites/default/files/styles/900x506/public/news-2023-09/1_3.jpg?itok=JTrbT080',
-        },
-        { label: 'Бренд', name: 'brand', defaultValue: '1' },
-        { label: 'Название модели', name: 'modelName', defaultValue: 'R8' },
-        { label: 'Цена', name: 'price', defaultValue: '1000000' },
-        { label: 'Год выпуска', name: 'year', defaultValue: '2023' },
-        { label: 'Цвет', name: 'color', defaultValue: 'Black' },
-        {
-          label: 'Тип двигателя',
-          name: 'engineType',
-          defaultValue: 'DIESEL',
-          type: 'select',
-          options: ['GAS', 'DIESEL', 'ELECTOR'],
-        },
-        {
-          label: 'Трансмиссия',
-          name: 'transmission',
-          defaultValue: 'AUTOMATIC',
-          type: 'select',
-          options: ['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC'],
-        },
-        { label: 'Запас хода', name: 'powerReserve', defaultValue: '0' },
-        {
-          label: 'Комплектация',
-          name: 'equipment',
-          defaultValue: '',
-          type: 'select',
-          options: equipmentOptions,
-        },
-      ].map(({ label, name, defaultValue, type, options }) => (
-        <label key={name} className={styles.formLabel}>
-          {label}:
-          {type === 'select' ? (
-            <select
-              className={styles.formInput}
-              name={name}
-              {...register(name)}
-            >
-              {options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              className={styles.formInput}
-              type="text"
-              name={name}
-              defaultValue={defaultValue}
-              {...register(name)}
-            />
-          )}
-        </label>
-      ))}
-      <Button type="submit">Создать</Button>
-      <Link style={{ marginLeft: '10px' }} href="/">
-        <Button>Назад</Button>
-      </Link>
+      <Title>Добавить авто:</Title>
+      <Input placeholder="Ссылка на картинку" {...register('imageUrl')} />
+      <Input placeholder="Бренд" {...register('brand')} />
+      <Input placeholder="Название модели" {...register('modelName')} />
+      <Input placeholder="Цена" {...register('price')} />
+      <Input placeholder="Год выпуска" {...register('year')} />
+      <Input placeholder="Цвет" {...register('color')} />
+      <Input placeholder="Запас хода" {...register('powerReserve')} />
+      <Select
+        label="Комплектация"
+        data={equipmentOptions}
+        {...register('equipment')}
+        value={[1]}
+      />
+      <Select
+        label="Тип двигателя"
+        data={['Не выбрано', 'GAS', 'DIESEL', 'ELECTOR']}
+        {...register('engineType')}
+        value={getValues('engineType')}
+        onChange={(value) => setValue('engineType', value)}
+      />
+      <Select
+        label="Трансмиссия"
+        data={['Не выбрано', 'MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
+        {...register('transmission')}
+        value={getValues('transmission')}
+        onChange={(value) => setValue('transmission', value)}
+      />
+      <div className={styles.btnGroup}>
+        <Button color="green" type="submit">
+          Создать
+        </Button>
+        <Link href="/">
+          <Button>Назад</Button>
+        </Link>
+      </div>
     </form>
   )
 }

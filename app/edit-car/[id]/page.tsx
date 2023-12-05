@@ -1,98 +1,94 @@
-import React from 'react'
+'use client'
+
 import Link from 'next/link'
-import { Button } from '@mantine/core'
+import React, { useEffect } from 'react'
+import styles from './edit.module.scss'
 
-import { prisma } from '@/core/prisma'
-import { notFound } from 'next/navigation'
-import { updateAuto } from '@/app/actions'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { CreateCartFormValues } from './add-car.types'
+import { Input, Select, Button, Title } from '@mantine/core'
+import { getEquipmentOptions, updateAuto } from '@/app/actions'
 
-export default async function EditCar({
-  params,
-}: {
-  params: {
-    id: number
-  }
-}) {
-  const data = await prisma.car.findFirst({
-    where: {
-      id: Number(params.id),
-    },
-    include: {
-      brand: true,
-      equipment: true,
-      user: true,
-    },
-  })
+const AddForm: React.FC = ({ params }) => {
+  const router = useRouter()
+  const { register, handleSubmit, setValue, getValues } =
+    useForm<CreateCartFormValues>({
+      defaultValues: {
+        imageUrl: '',
+        brand: '',
+        modelName: '',
+        price: '',
+        year: '',
+        color: '',
+        equipment: [1],
+        engineType: '',
+        transmission: '',
+      },
+    })
 
-  if (!data) {
-    notFound()
+  const [equipmentOptions, setEquipmentOptions] = React.useState<string[]>([])
+
+  useEffect(() => {
+    async function fetchEquipmentOptions() {
+      const options = await getEquipmentOptions()
+      setEquipmentOptions(options)
+    }
+    setValue('equipment', [1])
+    setValue('engineType', 'Не выбрано')
+    setValue('transmission', 'Не выбрано')
+    fetchEquipmentOptions()
+  }, [])
+
+  const onSubmit = async (formData: CreateCartFormValues) => {
+    try {
+      await updateAuto(params.id, formData)
+      router.push('/')
+    } catch (error) {
+      alert('Error creating')
+    }
   }
 
   return (
-    <form action={updateAuto}>
-      <label>
-        Image URL:
-        <input
-          type="text"
-          name="imageUrl"
-          value="https://cdn.iz.ru/sites/default/files/styles/900x506/public/news-2023-09/1_3.jpg?itok=JTrbT080"
-        />
-      </label>
-      <br />
-      <label>
-        Brand:
-        <input type="text" name="brand" value="3" />
-      </label>
-      <br />
-      <label>
-        Model Name:
-        <input type="text" name="modelName" value="R8" />
-      </label>
-      <br />
-      <label>
-        Price:
-        <input type="text" name="price" value="1000000" />
-      </label>
-      <br />
-      <label>
-        Year:
-        <input type="text" name="year" value="2023" />
-      </label>
-      <br />
-      <label>
-        Color:
-        <input type="text" name="color" value="Black" />
-      </label>
-      <br />
-      <label>
-        Engine Type:
-        <input type="text" name="engineType" value="DIESEL" />
-      </label>
-      <br />
-      <label>
-        Transmission:
-        <input type="text" name="transmission" value="AUTOMATIC" />
-      </label>
-      <br />
-      <label>
-        Power Reserve:
-        <input type="text" name="powerReserve" value="0" />
-      </label>
-      <br />
-      <label>
-        Equipment:
-        <input type="text" name="equipment" />
-      </label>
-      <br />
-      <label>
-        User:
-        <input type="text" name="user" />
-      </label>
-      <br />
-      <Button type="submit">Сохранить</Button>
-      <Link href="/">
-        <Button>Назад</Button>
-      </Link>
+    <form className={styles.formContainer} onSubmit={handleSubmit(onSubmit)}>
+      <Title>Изменить авто:</Title>
+      <Input placeholder="Ссылка на картинку" {...register('imageUrl')} />
+      <Input placeholder="Бренд" {...register('brand')} />
+      <Input placeholder="Название модели" {...register('modelName')} />
+      <Input placeholder="Цена" {...register('price')} />
+      <Input placeholder="Год выпуска" {...register('year')} />
+      <Input placeholder="Цвет" {...register('color')} />
+      <Input placeholder="Запас хода" {...register('powerReserve')} />
+      <Select
+        label="Комплектация"
+        data={equipmentOptions}
+        {...register('equipment')}
+        value={[1]}
+      />
+      <Select
+        label="Тип двигателя"
+        data={['Не выбрано', 'GAS', 'DIESEL', 'ELECTOR']}
+        {...register('engineType')}
+        value={getValues('engineType')}
+        onChange={(value) => setValue('engineType', value)}
+      />
+      <Select
+        label="Трансмиссия"
+        data={['Не выбрано', 'MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
+        {...register('transmission')}
+        value={getValues('transmission')}
+        onChange={(value) => setValue('transmission', value)}
+      />
+      <div className={styles.btnGroup}>
+        <Button color="green" type="submit">
+          Изменить
+        </Button>
+        <Link href="/">
+          <Button>Назад</Button>
+        </Link>
+      </div>
     </form>
   )
 }
+
+export default AddForm

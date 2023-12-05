@@ -105,3 +105,18 @@ export const updateAuto = async (carId: number, formData: FormData) => {
 
   revalidatePath('/')
 }
+
+export async function getEquipmentOptions() {
+  const equipment = await prisma.equipment.findMany()
+  return equipment.map((e) => e.name)
+}
+
+export const deleteAuto = async (carId: number) => {
+  await prisma.car.delete({
+    where: {
+      id: carId,
+    },
+  })
+
+  revalidatePath('/')
+}

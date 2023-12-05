@@ -1,23 +1,27 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
-
 import Link from 'next/link'
-import { Button } from '@mantine/core'
+import { useRouter } from 'next/navigation'
+import { Input, Button, Title } from '@mantine/core'
+
 import styles from './login.module.scss'
 import { loginUser } from '@/app/actions'
+
+interface FormValues {
+  email: string
+  password: string
+}
 
 const Login: React.FC = () => {
   const router = useRouter()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
 
-  const handleLogin = async () => {
-    const formattedData = Object.entries({ email, password })
+  const handleLogin = async (data: FormValues) => {
     try {
-      //@ts-ignore
-      await loginUser(formattedData)
+      const token = await loginUser(data.email, data.password)
+      localStorage.setItem('token', token)
       router.push('/')
     } catch (error) {
       console.error('Error logging in:', error)
@@ -26,33 +30,33 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Авторизация</h1>
-      <div className={styles.inputContainer}>
-        <label className={styles.label}>Email</label>
-        <input
+      <Title order={1}>Авторизация</Title>
+      <form className={styles.formContainer} onSubmit={handleLogin}>
+        <Input
           type="email"
+          label="Email"
           placeholder="Введите ваш email"
-          className={styles.input}
+          required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.currentTarget.value)}
         />
-      </div>
-      <div className={styles.inputContainer}>
-        <label className={styles.label}>Пароль</label>
-        <input
+        <Input
           type="password"
+          label="Пароль"
           placeholder="Введите ваш пароль"
-          className={styles.input}
+          required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.currentTarget.value)}
         />
-      </div>
-      <div className={styles.buttonGroup}>
-        <Button onClick={handleLogin}>Авторизация</Button>
-        <Link href="/">
-          <Button>Назад</Button>
-        </Link>
-      </div>
+        <div className={styles.buttonGroup}>
+          <Button type="submit" color="green">
+            Авторизация
+          </Button>
+          <Link href="/">
+            <Button>Назад</Button>
+          </Link>
+        </div>
+      </form>
     </div>
   )
 }

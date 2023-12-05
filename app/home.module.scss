@@ -4,23 +4,28 @@
   gap: 20px;
 }
 
-.cardList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 65px;
-}
-
-.header {
+.headerContainer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.authButtons {
-  display: flex;
-  justify-content: flex-end;
   gap: 10px;
   border-bottom: 1px solid #ccc;
   padding-bottom: 15px;
   margin-bottom: 15px;
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.addCar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
 }

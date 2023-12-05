@@ -1,23 +1,26 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
-
 import Link from 'next/link'
-import { Button } from '@mantine/core'
-import { createUser } from '@/app/actions'
+import { useRouter } from 'next/navigation'
+import { Input, Button, Title } from '@mantine/core'
+
 import styles from './register.module.scss'
+import { createUser } from '@/app/actions'
+
+interface FormValues {
+  fullName: string
+  email: string
+  password: string
+}
 
 const Register: React.FC = () => {
   const router = useRouter()
-  const [email, setEmail] = React.useState('')
-  const [fullName, setFullName] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const handleRegister = async () => {
-    const formattedData = Object.entries({ fullName, email, password })
+
+  const handleRegister = async (data: FormValues) => {
     try {
-      //@ts-ignore
-      await createUser(formattedData)
+      const token = await createUser(data)
+      localStorage.setItem('token', token)
       router.push('/')
     } catch (error) {
       console.error('Error registering:', error)
@@ -26,43 +29,64 @@ const Register: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Регистрация</h1>
-      <div className={styles.inputContainer}>
-        <label className={styles.label}>Полное Имя</label>
-        <input
-          type="text"
+      <Title order={1}>Регистрация</Title>
+      <form className={styles.formContainer} onSubmit={handleRegister}>
+        <Input
+          label="Имя"
           placeholder="Введите полное имя"
-          className={styles.input}
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          required
+          id="fullName"
+          name="fullName"
+          autoComplete="off"
         />
-      </div>
-      <div className={styles.inputContainer}>
-        <label className={styles.label}>Email</label>
-        <input
-          type="e-mail"
+        <Input
+          type="email"
+          label="Email"
           placeholder="Введите ваш email"
-          className={styles.input}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          required
+          id="email"
+          name="email"
+          autoComplete="off"
+          validations={[
+            {
+              rule: 'required',
+              message: 'Email обязателен',
+            },
+            {
+              rule: 'email',
+              message: 'Некорректный email',
+            },
+          ]}
         />
-      </div>
-      <div className={styles.inputContainer}>
-        <label className={styles.label}>Пароль</label>
-        <input
+        <Input
           type="password"
+          label="Пароль"
           placeholder="Введите ваш пароль"
-          className={styles.input}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          required
+          id="password"
+          name="password"
+          autoComplete="new-password"
+          validations={[
+            {
+              rule: 'required',
+              message: 'Пароль обязателен',
+            },
+            {
+              rule: 'minLength',
+              value: 6,
+              message: 'Минимальная длина пароля - 6 символов',
+            },
+          ]}
         />
-      </div>
-      <div className={styles.buttonGroup}>
-        <Button onClick={handleRegister}>Регистрация</Button>
-        <Link href="/">
-          <Button>Назад</Button>
-        </Link>
-      </div>
+        <div className={styles.buttonGroup}>
+          <Button type="submit" color="green">
+            Регистрация
+          </Button>
+          <Link href="/">
+            <Button>Назад</Button>
+          </Link>
+        </div>
+      </form>
     </div>
   )
 }
