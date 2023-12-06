@@ -2,13 +2,14 @@
 
 import React from 'react'
 import Link from 'next/link'
+import styles from './add-car.module.scss'
+
 import { message } from 'antd'
 import { useForm } from 'react-hook-form'
-import styles from './add-car.module.scss'
 import { useRouter } from 'next/navigation'
 import { CreateCartFormValues } from './add-car.types'
-import { createAuto, getEquipmentOptions } from '@/app/actions'
 import { Input, Select, Button, Title } from '@mantine/core'
+import { createAuto, getEquipmentOptions } from '@/app/actions'
 
 const AddForm: React.FC = () => {
   const router = useRouter()
@@ -77,21 +78,21 @@ const AddForm: React.FC = () => {
         data={equipmentOptions}
         {...register('equipment')}
         value={getValues('equipment')}
-        onChange={(value) => setValue('equipment', value)}
+        onChange={(value: string | null) => setValue('equipment', value)}
       />
       <Select
         label="Тип двигателя"
         data={['GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
         value={getValues('engineType')}
-        onChange={(value) => setValue('engineType', value)}
+        onChange={(value: string | null) => setValue('engineType', value)}
       />
       <Select
         label="Трансмиссия"
         data={['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
         value={getValues('transmission')}
-        onChange={(value) => setValue('transmission', value)}
+        onChange={(value: string | null) => setValue('transmission', value)}
       />
       <div className={styles.btnGroup}>
         <Button color="green" type="submit">

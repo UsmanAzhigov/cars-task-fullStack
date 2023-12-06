@@ -4,17 +4,18 @@ import Link from 'next/link'
 import React, { useEffect } from 'react'
 import styles from './edit.module.scss'
 
+import { message } from 'antd'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { CreateCartFormValues } from '../.././add-car/add-cart.types'
 import { Input, Select, Button, Title } from '@mantine/core'
 import { getEquipmentOptions, updateAuto } from '@/app/actions'
+import { CreateCartFormValues } from '../.././add-car/add-cart.types'
 interface AddFormProps {
   params: {
-    id: number
+    id: string
   }
 }
-const AddForm: React.FC<AddFormProps> = ({ params }) => {
+const EditCar: React.FC<AddFormProps> = ({ params }) => {
   const router = useRouter()
   const { register, handleSubmit, setValue, getValues } =
     useForm<CreateCartFormValues>({
@@ -38,7 +39,7 @@ const AddForm: React.FC<AddFormProps> = ({ params }) => {
       const options = await getEquipmentOptions()
       setEquipmentOptions(options)
     }
-    setValue('equipment', [1])
+    setValue('equipment', [])
     setValue('engineType', '')
     setValue('transmission', '')
 
@@ -49,8 +50,9 @@ const AddForm: React.FC<AddFormProps> = ({ params }) => {
     try {
       await updateAuto(params.id, formData)
       router.push('/')
+      message.succes('Изменение прошло успешно')
     } catch (error) {
-      alert('Error creating')
+      message.error('Не удалось изменить')
     }
   }
 
@@ -77,27 +79,25 @@ const AddForm: React.FC<AddFormProps> = ({ params }) => {
         {...register('powerReserve')}
       />
       <Select
-        required={true}
         label="Комплектация"
         data={equipmentOptions}
         {...register('equipment')}
-        value={[1]}
+        value={getValues('equipment')}
+        onChange={(value: string | null) => setValue('equipment', value)}
       />
       <Select
-        required={true}
         label="Тип двигателя"
         data={['GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
         value={getValues('engineType')}
-        onChange={(value) => setValue('engineType', value)}
+        onChange={(value: string | null) => setValue('engineType', value)}
       />
       <Select
-        required={true}
         label="Трансмиссия"
         data={['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
         value={getValues('transmission')}
-        onChange={(value) => setValue('transmission', value)}
+        onChange={(value: string | null) => setValue('transmission', value)}
       />
       <div className={styles.btnGroup}>
         <Button color="green" type="submit">
@@ -111,4 +111,4 @@ const AddForm: React.FC<AddFormProps> = ({ params }) => {
   )
 }
 
-export default AddForm
+export default EditCar

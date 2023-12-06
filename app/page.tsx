@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
-import { prisma } from '@/core/prisma'
 import styles from './home.module.scss'
 
+import { prisma } from '@/core/prisma'
 import { Sort } from '@/components/sort'
 import { HomeProps } from '@/app/home.type'
 import { GridCars } from '@/components/grid-cars'

@@ -1,24 +1,17 @@
 'use server'
 
-import { prisma } from '@/core/prisma'
-import { EngineType, Transmisison } from '@prisma/client'
-import { revalidatePath } from 'next/cache'
-
-//@ts-ignore
 import bcrypt from 'bcrypt'
-import { CreateCartFormValues } from './add-car/add-cart.types'
+import { prisma } from '@/core/prisma'
+import { revalidatePath } from 'next/cache'
+import { CreateCartFormValues, UserData } from './add-car/add-cart.types'
 
-export const createUser = async (formData: {
-  password: string
-  fullName: string
-  email: string
-}) => {
-  const data = Object.fromEntries(formData)
+export const createUser = async (formData: UserData) => {
+  const data = Object.fromEntries(Object.entries(formData)) as UserData
   const hashedPassword = await bcrypt.hash(data.password, 10)
   const newUser = await prisma.user.create({
     data: {
-      fullName: data.username as string,
-      email: data.email as string,
+      fullName: data.fullName,
+      email: data.email,
       password: hashedPassword,
     },
   })
@@ -42,11 +35,11 @@ export const loginUser = async (fullName: string, password: string) => {
 export const createAuto = async (data: CreateCartFormValues) => {
   await prisma.car.create({
     data: {
-      imageUrl: data.imageUrl as string,
-      modelName: data.modelName as string,
+      imageUrl: data.imageUrl,
+      modelName: data.modelName,
       price: Number(data.price),
       year: Number(data.year),
-      color: data.color as string,
+      color: data.color,
       equipment: {
         connect: [{ id: 1 }],
       },
@@ -55,9 +48,9 @@ export const createAuto = async (data: CreateCartFormValues) => {
           id: 1,
         },
       },
-      engineType: data.engineType as EngineType,
-      transmission: data.transmission as Transmisison,
-      powerReserve: 0,
+      engineType: data.engineType,
+      transmission: data.transmission,
+      powerReserve: Number(data.powerReserve),
       published: true,
       brand: {
         connect: {
@@ -70,30 +63,29 @@ export const createAuto = async (data: CreateCartFormValues) => {
   revalidatePath('/')
 }
 
-export const updateAuto = async (carId: number, formData: FormData) => {
+export const updateAuto = async (carId: string, formData: FormData) => {
   const data = Object.fromEntries(formData)
-
   await prisma.car.update({
     where: {
-      id: carId,
+      id: Number(carId),
     },
     data: {
-      imageUrl: data.imageUrl as string,
-      modelName: data.modelName as string,
+      imageUrl: data.imageUrl,
+      modelName: data.modelName,
       price: Number(data.price),
       year: Number(data.year),
-      color: data.color as string,
+      color: data.color,
       equipment: {
-        connect: [],
+        connect: [{ id: 1 }],
       },
       user: {
         connect: {
           id: 1,
         },
       },
-      engineType: data.engineType as EngineType,
-      transmission: data.transmission as Transmisison,
-      powerReserve: 0,
+      engineType: data.engineType,
+      transmission: data.transmission,
+      powerReserve: Number(data.powerReserve),
       published: true,
       brand: {
         connect: {
@@ -108,7 +100,7 @@ export const updateAuto = async (carId: number, formData: FormData) => {
 
 export async function getEquipmentOptions() {
   const equipment = await prisma.equipment.findMany()
-  return equipment.map((e) => e.name)
+  return equipment.map((e: any) => e.name)
 }
 
 export const deleteAuto = async (carId: number) => {

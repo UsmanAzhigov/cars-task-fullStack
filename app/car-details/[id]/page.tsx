@@ -1,9 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
+import styles from './car-details.module.scss'
+
 import { prisma } from '@/core/prisma'
 import { notFound } from 'next/navigation'
 import { Button, Image, Text, Title, Badge } from '@mantine/core'
-import styles from './car-details.module.scss'
 
 export default async function CarDetails({
   params,
@@ -29,12 +30,16 @@ export default async function CarDetails({
 
   return (
     <div className={styles.carDetailsContainer}>
-      <Image src={data.imageUrl} alt={`${data.brand.name} ${data.modelName}`} />
+      <Image
+        radius="md"
+        src={data.imageUrl}
+        alt={`${data.brand.name} ${data.modelName}`}
+      />
       <div className={styles.carTitle}>
         <Title order={1} orderMd={2}>
           {data.brand.name} {data.modelName}
         </Title>
-        <Badge color="teal" radius="md" style={{ marginBottom: '10px' }}>
+        <Badge color="teal" radius="md">
           Стоимость: {data.price}
         </Badge>
         <Text>Цвет: {data.color}</Text>
@@ -49,7 +54,7 @@ export default async function CarDetails({
         </ul>
       </div>
       <Link href="/">
-        <Button style={{ marginTop: '20px' }}>Назад</Button>
+        <Button>Назад</Button>
       </Link>
     </div>
   )

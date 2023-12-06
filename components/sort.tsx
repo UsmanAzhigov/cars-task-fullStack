@@ -6,10 +6,18 @@ import { useRouter } from 'next/navigation'
 export const Sort: React.FC = () => {
   const router = useRouter()
 
+  const handleSortChange = (value: string | null) => {
+    if (value === 'reset') {
+      router.push('/')
+    } else {
+      router.push(`/?sortBy=${value}`)
+    }
+  }
+
   return (
     <Select
-      placeholder="Цена"
-      onChange={(value) => router.push(`/?sortBy=${value}`)}
+      placeholder="Сортировка"
+      onChange={(value: string | null) => handleSortChange(value)}
       data={[
         {
           value: 'price',
@@ -18,6 +26,10 @@ export const Sort: React.FC = () => {
         {
           value: 'year',
           label: 'Год',
+        },
+        {
+          value: 'reset',
+          label: 'Сбросить сортировку',
         },
       ]}
     />
