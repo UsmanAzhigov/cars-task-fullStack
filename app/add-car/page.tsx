@@ -21,7 +21,7 @@ const AddForm: React.FC = () => {
         price: '',
         year: '',
         color: '',
-        equipment: [1, 2, 3, 4, 5],
+        equipment: [],
         engineType: '',
         transmission: '',
       },
@@ -34,7 +34,7 @@ const AddForm: React.FC = () => {
       const options = await getEquipmentOptions()
       setEquipmentOptions(options)
     }
-    setValue('equipment', [1])
+    setValue('equipment', [])
     setValue('engineType', '')
     setValue('transmission', '')
     fetchEquipmentOptions()
@@ -43,8 +43,8 @@ const AddForm: React.FC = () => {
   const onSubmit = async (formData: CreateCartFormValues) => {
     try {
       await createAuto(formData)
-      message.succes('Авто добавлено')
       router.push('/')
+      message.succes('Авто добавлено')
     } catch (error) {
       message.error('Не удалось создать')
     }
@@ -74,7 +74,6 @@ const AddForm: React.FC = () => {
       />
       <Select
         label="Комплектация"
-        required={true}
         data={equipmentOptions}
         {...register('equipment')}
         value={getValues('equipment')}
@@ -82,7 +81,6 @@ const AddForm: React.FC = () => {
       />
       <Select
         label="Тип двигателя"
-        required={true}
         data={['GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
         value={getValues('engineType')}
@@ -90,7 +88,6 @@ const AddForm: React.FC = () => {
       />
       <Select
         label="Трансмиссия"
-        required={true}
         data={['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
         value={getValues('transmission')}

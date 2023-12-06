@@ -6,11 +6,15 @@ import styles from './edit.module.scss'
 
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { CreateCartFormValues } from './add-car.types'
+import { CreateCartFormValues } from '../.././add-car/add-cart.types'
 import { Input, Select, Button, Title } from '@mantine/core'
 import { getEquipmentOptions, updateAuto } from '@/app/actions'
-
-const AddForm: React.FC = ({ params }) => {
+interface AddFormProps {
+  params: {
+    id: number
+  }
+}
+const AddForm: React.FC<AddFormProps> = ({ params }) => {
   const router = useRouter()
   const { register, handleSubmit, setValue, getValues } =
     useForm<CreateCartFormValues>({
@@ -21,7 +25,7 @@ const AddForm: React.FC = ({ params }) => {
         price: '',
         year: '',
         color: '',
-        equipment: [1],
+        equipment: [],
         engineType: '',
         transmission: '',
       },
@@ -35,8 +39,9 @@ const AddForm: React.FC = ({ params }) => {
       setEquipmentOptions(options)
     }
     setValue('equipment', [1])
-    setValue('engineType', 'Не выбрано')
-    setValue('transmission', 'Не выбрано')
+    setValue('engineType', '')
+    setValue('transmission', '')
+
     fetchEquipmentOptions()
   }, [])
 
@@ -81,7 +86,7 @@ const AddForm: React.FC = ({ params }) => {
       <Select
         required={true}
         label="Тип двигателя"
-        data={['Не выбрано', 'GAS', 'DIESEL', 'ELECTOR']}
+        data={['GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
         value={getValues('engineType')}
         onChange={(value) => setValue('engineType', value)}
@@ -89,7 +94,7 @@ const AddForm: React.FC = ({ params }) => {
       <Select
         required={true}
         label="Трансмиссия"
-        data={['Не выбрано', 'MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
+        data={['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
         value={getValues('transmission')}
         onChange={(value) => setValue('transmission', value)}
