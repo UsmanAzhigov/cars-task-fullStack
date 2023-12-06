@@ -1,3 +1,9 @@
+При создани авто вместо названия бренда надо указать его id (npx prisma studio, можно узнать айди всех брендов)
+
+
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
