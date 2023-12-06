@@ -48,7 +48,7 @@ export const createAuto = async (data: CreateCartFormValues) => {
       year: Number(data.year),
       color: data.color as string,
       equipment: {
-        connect: [],
+        connect: [{ id: 1 }],
       },
       user: {
         connect: {
