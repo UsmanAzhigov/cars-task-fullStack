@@ -1,11 +1,11 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { message } from 'antd'
 import { useForm } from 'react-hook-form'
 import styles from './add-car.module.scss'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
 import { CreateCartFormValues } from './add-car.types'
 import { createAuto, getEquipmentOptions } from '@/app/actions'
 import { Input, Select, Button, Title } from '@mantine/core'
@@ -27,9 +27,9 @@ const AddForm: React.FC = () => {
       },
     })
 
-  const [equipmentOptions, setEquipmentOptions] = useState<string[]>([])
+  const [equipmentOptions, setEquipmentOptions] = React.useState<string[]>([])
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function fetchEquipmentOptions() {
       const options = await getEquipmentOptions()
       setEquipmentOptions(options)
@@ -53,15 +53,28 @@ const AddForm: React.FC = () => {
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit(onSubmit)}>
       <Title>Добавить авто:</Title>
-      <Input placeholder="Ссылка на картинку" {...register('imageUrl')} />
-      <Input placeholder="Бренд" {...register('brand')} />
-      <Input placeholder="Название модели" {...register('modelName')} />
-      <Input placeholder="Цена" {...register('price')} />
-      <Input placeholder="Год выпуска" {...register('year')} />
-      <Input placeholder="Цвет" {...register('color')} />
-      <Input placeholder="Запас хода" {...register('powerReserve')} />
+      <Input
+        required={true}
+        placeholder="Ссылка на картинку"
+        {...register('imageUrl')}
+      />
+      <Input required={true} placeholder="Бренд" {...register('brand')} />
+      <Input
+        required={true}
+        placeholder="Название модели"
+        {...register('modelName')}
+      />
+      <Input required={true} placeholder="Цена" {...register('price')} />
+      <Input required={true} placeholder="Год выпуска" {...register('year')} />
+      <Input required={true} placeholder="Цвет" {...register('color')} />
+      <Input
+        required={true}
+        placeholder="Запас хода"
+        {...register('powerReserve')}
+      />
       <Select
         label="Комплектация"
+        required={true}
         data={equipmentOptions}
         {...register('equipment')}
         value={getValues('equipment')}
@@ -69,6 +82,7 @@ const AddForm: React.FC = () => {
       />
       <Select
         label="Тип двигателя"
+        required={true}
         data={['GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
         value={getValues('engineType')}
@@ -76,6 +90,7 @@ const AddForm: React.FC = () => {
       />
       <Select
         label="Трансмиссия"
+        required={true}
         data={['MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
         value={getValues('transmission')}

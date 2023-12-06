@@ -52,20 +52,34 @@ const AddForm: React.FC = ({ params }) => {
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit(onSubmit)}>
       <Title>Изменить авто:</Title>
-      <Input placeholder="Ссылка на картинку" {...register('imageUrl')} />
-      <Input placeholder="Бренд" {...register('brand')} />
-      <Input placeholder="Название модели" {...register('modelName')} />
-      <Input placeholder="Цена" {...register('price')} />
-      <Input placeholder="Год выпуска" {...register('year')} />
-      <Input placeholder="Цвет" {...register('color')} />
-      <Input placeholder="Запас хода" {...register('powerReserve')} />
+      <Input
+        required={true}
+        placeholder="Ссылка на картинку"
+        {...register('imageUrl')}
+      />
+      <Input required={true} placeholder="Бренд" {...register('brand')} />
+      <Input
+        required={true}
+        placeholder="Название модели"
+        {...register('modelName')}
+      />
+      <Input required={true} placeholder="Цена" {...register('price')} />
+      <Input required={true} placeholder="Год выпуска" {...register('year')} />
+      <Input required={true} placeholder="Цвет" {...register('color')} />
+      <Input
+        required={true}
+        placeholder="Запас хода"
+        {...register('powerReserve')}
+      />
       <Select
+        required={true}
         label="Комплектация"
         data={equipmentOptions}
         {...register('equipment')}
         value={[1]}
       />
       <Select
+        required={true}
         label="Тип двигателя"
         data={['Не выбрано', 'GAS', 'DIESEL', 'ELECTOR']}
         {...register('engineType')}
@@ -73,6 +87,7 @@ const AddForm: React.FC = ({ params }) => {
         onChange={(value) => setValue('engineType', value)}
       />
       <Select
+        required={true}
         label="Трансмиссия"
         data={['Не выбрано', 'MANUAL', 'AUTOMATIC', 'SEMI_AUTOMATIC']}
         {...register('transmission')}
